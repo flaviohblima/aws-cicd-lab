@@ -27,14 +27,14 @@ phases:
           --template-file template.yaml \
           --stack-name cicd-lab-stack \
           --capabilities CAPABILITY_NAMED_IAM \
-          --parameter-overrides EnvironmentName=dev
+          --parameter-overrides EnvironmentName=dev \
           --region $AWS_DEFAULT_REGION
       - echo "Updating Lambda with new code..."
       - |
         aws lambda update-function-code \
           --function-name cicd-api-dev \
           --s3-bucket cicd-artifacts-${ACCOUNT_ID} \
-          --s3-key lambda/function.zip
+          --s3-key lambda/function.zip \
           --region $AWS_DEFAULT_REGION
 
   post_build:
