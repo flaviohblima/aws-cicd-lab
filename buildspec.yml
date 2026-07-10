@@ -1,0 +1,53 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.12
+    commands:
+      - echo "Installing dependencies..."
+      - pip install pytest --quiet
+
+  pre_build:
+    commands:
+      - echo "Running tests..."
+      - python -m pytest tests/ -m
+      - echo "Tests passed!"
+
+  build:
+    commands:
+      - echo "Packaging Lambda function..."
+      - mkdir -p build
+      - cp src/app.py build/app.py
+      - cd build && zip -r ../lambda-package.zip . && cd ..
+      - echo "Uploading package to S3..."
+      - aws s3 cp lambda-package.zip s3://cicd-artifacts-${ACCOUNT_ID}/lambda/function.zip
+      - |
+        aws cloudformation deploy \
+          --template-file template.yaml \
+          --stack-name cicd-lab-stack \
+          --capabilities CAPABILITY_NAMED_IAM \
+          --parameter-overrides EnvironmentName=dev
+          --region $AWS_DEFAULT_REGION
+      - echo "Updating Lambda with new code..."
+      - |
+        aws lambda update-function-code \
+          --function-name cicd-api-dev \
+          --s3-bucket cicd-artifacts-${ACCOUNT_ID} \
+          --s3-key lambda/function.zip
+          --region $AWS_DEFAULT_REGION
+
+  post_build:
+    commands:
+      - echo "Deployment comple!"
+      - |
+        aws cloudformation describe-stacks \
+          --stack-name cicd-lab-stack \
+          --query "Stacks[0].Outputs" \
+          --output table
+
+artifacts:
+  files:
+    - template.yaml
+    - lambda-package.zip
+  discard-paths: no
