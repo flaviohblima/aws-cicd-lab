@@ -39,7 +39,7 @@ phases:
 
   post_build:
     commands:
-      - echo "Deployment comple!"
+      - echo "Deployment complete!"
       - |
         aws cloudformation describe-stacks \
           --stack-name cicd-lab-stack \
