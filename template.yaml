@@ -91,7 +91,6 @@ Resources:
     Type: AWS::ApiGateway::Deployment
     Properties:
       RestApiId: !Ref ApiGateway
-      StageName: !Ref EnvironmentName
     DependsOn:
       - HealthMethod
       - VersionMethod
