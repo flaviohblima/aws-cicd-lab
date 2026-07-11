@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime
 
-VERSION = "1.0.1"
+VERSION = "1.0.2"
 
 def lambda_handler(event, context):
   method = event.get('httpMethod', 'GET')
