@@ -20,7 +20,7 @@ def test_version_returns_200():
   result = lambda_handler(make_event('GET', '/version'), {})
   assert result['statusCode'] == 200
   body = json.loads(result['body'])
-  assert body['version'] == '1.0.0'
+  assert body['version'] == '1.0.1'
   print(f"✅ test_version_returns_200 passed")
   
 def test_unknown_route_returns_404():
